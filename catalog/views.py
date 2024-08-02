@@ -1,4 +1,5 @@
 from rest_framework import permissions, viewsets
+from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema
 from .serializers import (
     CategorySerializer, ColorSerializer, SizeSerializer, ProductSerializer)
@@ -43,7 +44,18 @@ class SizeViewSet(viewsets.ModelViewSet):
     tags=['Product']
 )
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all().order_by('name')
+    queryset = Product.objects.all().order_by('-modified_at')
     serializer_class = ProductSerializer
     permission_classes = [ProductPermission,]
     lookup_field = 'slug'
+
+    def get_queryset(self):
+        queryset = super(ProductViewSet, self).get_queryset()
+
+        if self.action in ['list', 'retrieve']:
+            queryset = Product.objects.select_related('category')\
+                .prefetch_related(Prefetch('colors'))\
+                .prefetch_related(Prefetch('sizes'))\
+                .order_by('-modified_at')
+
+        return queryset

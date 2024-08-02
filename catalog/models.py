@@ -50,6 +50,8 @@ class Product(models.Model):
     sizes = models.ManyToManyField(Size, blank=True, related_name='products', help_text=_(
         'Enter the sizes of the product'))
     slug = models.SlugField(max_length=128, db_index=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = _('Product')
