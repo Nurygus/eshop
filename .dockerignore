@@ -1,0 +1,13 @@
+.venv/
+.git/
+
+# everything from .gitignore:
+__pycache__/
+*.py[cod]
+
+# Django stuff:
+*.log
+*.pot
+
+# Translations
+*.mo
